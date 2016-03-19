@@ -420,19 +420,15 @@ public class FeedbackSessionsLogic {
         List<FeedbackQuestionAttributes> questions = fqLogic.getFeedbackQuestionsForStudents(feedbackSessionName,
                 courseId);
 
-        Set<String> hiddenInstructorEmails = null;
-        
-        for (FeedbackQuestionAttributes question : questions) {
-            if (question.getRecipientType() == FeedbackParticipantType.INSTRUCTORS) {
-                hiddenInstructorEmails = getHiddenInstructorEmails(courseId);
-                break;
-            }
-        }
+
+        InstructorAttributes instructorGiver = null;
+        StudentAttributes studentGiver = student;
 
         for (FeedbackQuestionAttributes question : questions) {
 
-            updateBundleAndRecipientListWithResponsesForStudent(userEmail, student,
-                    bundle, recipientList, question, hiddenInstructorEmails);
+            updateBundleAndRecipientListWithResponses(userEmail, student,
+                    bundle, recipientList, question, instructorGiver,
+                    studentGiver);
         }
 
         return new FeedbackSessionQuestionsBundle(fsa, bundle, recipientList);
@@ -461,111 +457,37 @@ public class FeedbackSessionsLogic {
 
         FeedbackQuestionAttributes question = fqLogic.getFeedbackQuestion(feedbackQuestionId);
 
-        Set<String> hiddenInstructorEmails = null;
+        InstructorAttributes instructorGiver = null;
+        StudentAttributes studentGiver = student;
 
-        if (question.getRecipientType() == FeedbackParticipantType.INSTRUCTORS) {
-            hiddenInstructorEmails = getHiddenInstructorEmails(courseId);
-        }
-
-        updateBundleAndRecipientListWithResponsesForStudent(userEmail, student,
-                bundle, recipientList, question, hiddenInstructorEmails);
+        
+        updateBundleAndRecipientListWithResponses(userEmail, student,
+                bundle, recipientList, question, instructorGiver,
+                studentGiver);
+        
 
         return new FeedbackSessionQuestionsBundle(fsa, bundle, recipientList);
     }
 
-    private void updateBundleAndRecipientListWithResponsesForStudent(
+    private void updateBundleAndRecipientListWithResponses(
             String userEmail,
             StudentAttributes student,
             Map<FeedbackQuestionAttributes, List<FeedbackResponseAttributes>> bundle,
             Map<String, Map<String, String>> recipientList,
             FeedbackQuestionAttributes question,
-            Set<String> hiddenInstructorEmails)
+            InstructorAttributes instructorGiver, StudentAttributes studentGiver)
             throws EntityDoesNotExistException {
         List<FeedbackResponseAttributes> responses =
                 frLogic.getFeedbackResponsesFromStudentOrTeamForQuestion(
                         question, student);
         Map<String, String> recipients =
-                fqLogic.getRecipientsForQuestion(question, userEmail, null, student);
-
-        removeHiddenInstructors(question, responses, recipients, hiddenInstructorEmails);
-
+                fqLogic.getRecipientsForQuestion(question, userEmail, instructorGiver, studentGiver);
         normalizeMaximumResponseEntities(question, recipients);
 
         bundle.put(question, responses);
         recipientList.put(question.getId(), recipients);
     }
-
-    /**
-     * Removes instructors who are not displayed to students from
-     * {@code recipients}. Responses to the hidden instructors are also removed
-     * from {@code responses}.
-     * 
-     * @param question
-     *            the feedback question
-     * @param responses
-     *            a {@link List} of feedback responses to the {@code question}
-     * @param recipients
-     *            a {@link Map} that maps the emails of the recipients to their
-     *            names
-     * @param hiddenInstructorEmails
-     *            a {@link Set} of emails of the instructors who are not
-     *            displayed to students
-     */
-    private void removeHiddenInstructors(FeedbackQuestionAttributes question,
-                                         List<FeedbackResponseAttributes> responses,
-                                         Map<String, String> recipients, 
-                                         Set<String> hiddenInstructorEmails) {
- 
-        boolean isNoChangeRequired = hiddenInstructorEmails == null
-                                   || hiddenInstructorEmails.isEmpty() 
-                                   || question.getRecipientType() != FeedbackParticipantType.INSTRUCTORS;
-
-        if (isNoChangeRequired) {
-            return;
-        }
-
-        for (String instructorEmail : hiddenInstructorEmails) {
-
-            if (recipients.containsKey(instructorEmail)) {
-                recipients.remove(instructorEmail);
-            }
-
-            // Remove responses to the hidden instructors if they have been stored already
-            Iterator<FeedbackResponseAttributes> iterResponse = responses.iterator();
-
-            while (iterResponse.hasNext()) {
-
-                FeedbackResponseAttributes response = iterResponse.next();
-
-                if (response.recipientEmail.equals(instructorEmail)) {
-                    iterResponse.remove();
-                }
-            }
-        }
-    }
-
-    /**
-     * @param courseId
-     *            the ID of the course
-     * @return a {@link Set} of emails of the instructors who are not displayed
-     *         to students in the course specified by {@code courseId}
-     */
-    private Set<String> getHiddenInstructorEmails(String courseId) {
-
-        InstructorsLogic instructorLogic = InstructorsLogic.inst();
-
-        List<InstructorAttributes> instructors = instructorLogic.getInstructorsForCourse(courseId);
-        Set<String> hiddenInstructorEmails = new HashSet<>();
-
-        for (InstructorAttributes instructor : instructors) {
-            if (!instructor.isDisplayedToStudents()) {
-                hiddenInstructorEmails.add(instructor.email);
-            }
-        }
-
-        return hiddenInstructorEmails;
-    }
-
+    
     public FeedbackSessionResponseStatus getFeedbackSessionResponseStatus(String feedbackSessionName, String courseId) throws EntityDoesNotExistException{
         
         CourseRoster roster = new CourseRoster(
@@ -2463,10 +2385,9 @@ public class FeedbackSessionsLogic {
                     lastName = Const.USER_IS_NOBODY;
                     team = email;
                 } else {
-                    // The email represents a missing *Attribute.
-                    // It might be a team name or the *Attribute has been deleted.
-                    name = Const.USER_IS_MISSING;
-                    lastName = Const.USER_IS_MISSING;
+                    // Assume that the email is actually a team name.
+                    name = Const.USER_IS_TEAM;
+                    lastName = Const.USER_IS_TEAM;
                     team = email;
                 }
             } else {
@@ -2481,7 +2402,7 @@ public class FeedbackSessionsLogic {
             giverRecipientName = team;
             giverRecipientLastName = team;
             teamName = "";
-        } else if (!name.equals(Const.USER_IS_NOBODY) && !name.equals(Const.USER_IS_MISSING)) {
+        } else if (name != Const.USER_IS_NOBODY && name != Const.USER_IS_TEAM) {
             giverRecipientName = name;
             giverRecipientLastName = lastName;
             teamName = team;

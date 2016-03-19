@@ -451,12 +451,6 @@ public class InstructorFeedbackPageUiTest extends BaseUiTestCase {
         // Check that we are redirected to the edit page.
         feedbackPage.verifyHtmlMainContent("/instructorFeedbackCopySuccess.html");
         
-        ______TS("Success case: copy successfully a previous session with trimmed name");
-        feedbackPage = getFeedbackPageForInstructor(idOfInstructorWithSessions);
-        feedbackPage.copyFeedbackSession(" New Session Trimmed (Copied) ", newSession.courseId);
-        feedbackPage.verifyStatus(Const.StatusMessages.FEEDBACK_SESSION_COPIED);
-        // Check that we are redirected to the edit page.
-        feedbackPage.verifyHtmlMainContent("/instructorFeedbackCopyTrimmedSuccess.html");
         
         ______TS("Failure case: copy fail since the feedback session name is the same with existing one");
         feedbackPage = getFeedbackPageForInstructor(idOfInstructorWithSessions);
@@ -464,9 +458,9 @@ public class InstructorFeedbackPageUiTest extends BaseUiTestCase {
         feedbackPage.copyFeedbackSession("New Session (Copied)", newSession.courseId);
         feedbackPage.verifyStatus("A feedback session by this name already exists under this course");
        
-        feedbackPage.reloadPage();
         
         ______TS("Failure case: copy fail since the feedback session name is blank");
+        feedbackPage = getFeedbackPageForInstructor(idOfInstructorWithSessions);
         
         feedbackPage.copyFeedbackSession("", newSession.courseId);
         feedbackPage.verifyStatus(
@@ -495,11 +489,9 @@ public class InstructorFeedbackPageUiTest extends BaseUiTestCase {
         ______TS("Submit empty course list: Feedbacks Page");
         
         feedbackPage.clickFsCopyButton(courseId, feedbackSessionName);
-        feedbackPage.fsCopyToModal.waitForModalToLoad();
-        feedbackPage.fsCopyToModal.clickSubmitButton();
-        feedbackPage.fsCopyToModal.waitForFormSubmissionErrorMessagePresence();
-        assertTrue(feedbackPage.fsCopyToModal.isFormSubmissionStatusMessageVisible());
-        feedbackPage.fsCopyToModal.verifyStatusMessage(Const.StatusMessages.FEEDBACK_SESSION_COPY_NONESELECTED);
+        feedbackPage.waitForModalToLoad();
+        feedbackPage.clickFsCopySubmitButton();
+        feedbackPage.verifyStatus(Const.StatusMessages.FEEDBACK_SESSION_COPY_NONESELECTED);
         
         // Go back to previous page because 'copy feedback session' redirects to the 'FeedbackEdit' page.
         feedbackPage.goToPreviousPage(InstructorFeedbacksPage.class);
@@ -508,49 +500,44 @@ public class InstructorFeedbackPageUiTest extends BaseUiTestCase {
         ______TS("Copying fails due to fs with same name in course selected: Feedbacks Page");
         
         feedbackPage.clickFsCopyButton(courseId, feedbackSessionName);
-        feedbackPage.fsCopyToModal.waitForModalToLoad();
-        feedbackPage.fsCopyToModal.fillFormWithAllCoursesSelected(feedbackSessionName);
+        feedbackPage.waitForModalToLoad();
+        feedbackPage.fillCopyToOtherCoursesForm(feedbackSessionName);
         
-        feedbackPage.fsCopyToModal.clickSubmitButton();
+        feedbackPage.clickFsCopySubmitButton();
         
         String error = String.format(Const.StatusMessages.FEEDBACK_SESSION_COPY_ALREADYEXISTS,
                                      feedbackSessionName, courseId);
         
-        feedbackPage.fsCopyToModal.waitForFormSubmissionErrorMessagePresence();
-        assertTrue(feedbackPage.fsCopyToModal.isFormSubmissionStatusMessageVisible());
-        feedbackPage.fsCopyToModal.verifyStatusMessage(error);
+        feedbackPage.verifyStatus(error);
         
-        feedbackPage.fsCopyToModal.clickCloseButton();
+        feedbackPage.goToPreviousPage(InstructorFeedbacksPage.class);
         
         
         ______TS("Copying fails due to fs with invalid name: Feedbacks Page");
         
         feedbackPage.clickFsCopyButton(courseId, feedbackSessionName);
-        feedbackPage.fsCopyToModal.waitForModalToLoad();
-        feedbackPage.fsCopyToModal.fillFormWithAllCoursesSelected("Invalid name | for feedback session");
+        feedbackPage.waitForModalToLoad();
+        feedbackPage.fillCopyToOtherCoursesForm("Invalid name | for feedback session");
         
-        feedbackPage.fsCopyToModal.clickSubmitButton();
+        feedbackPage.clickFsCopySubmitButton();
         
-        feedbackPage.fsCopyToModal.waitForFormSubmissionErrorMessagePresence();
-        assertTrue(feedbackPage.fsCopyToModal.isFormSubmissionStatusMessageVisible());
-        feedbackPage.fsCopyToModal.verifyStatusMessage(
+        feedbackPage.verifyStatus(
                 "\"Invalid name | for feedback session\" is not acceptable to TEAMMATES as "
                 + "feedback session name because it contains invalid characters. "
                 + "All feedback session name must start with an alphanumeric character, "
                 + "and cannot contain any vertical bar (|) or percent sign (%).");
         
-        feedbackPage.fsCopyToModal.clickCloseButton();
+        feedbackPage.goToPreviousPage(InstructorFeedbacksPage.class);
         
         ______TS("Successful case: Feedbacks Page");
         
         feedbackPage.clickFsCopyButton(courseId, feedbackSessionName);
-        feedbackPage.fsCopyToModal.waitForModalToLoad();
-        feedbackPage.fsCopyToModal.fillFormWithAllCoursesSelected("New name!");
+        feedbackPage.waitForModalToLoad();
+        feedbackPage.fillCopyToOtherCoursesForm("New name!");
         
-        feedbackPage.fsCopyToModal.clickSubmitButton();
-   
-        feedbackPage.waitForPageToLoad();
-        feedbackPage.verifyStatusWithRetry(Const.StatusMessages.FEEDBACK_SESSION_COPIED, 10);
+        feedbackPage.clickFsCopySubmitButton();
+        
+        feedbackPage.verifyStatus(Const.StatusMessages.FEEDBACK_SESSION_COPIED);
         
         feedbackPage.goToPreviousPage(InstructorFeedbacksPage.class);
     }

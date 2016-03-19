@@ -625,7 +625,7 @@ function validateConstSumQuestions() {
         statusMessage += '. ';
         statusMessage += 'To skip a distribution question, leave the boxes blank.';
 
-        setStatusMessage(statusMessage, StatusType.DANGER);
+        setStatusMessage(statusMessage, true);
         return false;
     }
 
@@ -757,7 +757,7 @@ function validateAllAnswersHaveRecipient() {
     }
 
     if (!isAllAnswersToMissingRecipientEmpty) {
-        setStatusMessage(statusMessage + '.', StatusType.DANGER);
+        setStatusMessage(statusMessage + '.', true);
     }
 
     return isAllAnswersToMissingRecipientEmpty;
@@ -825,7 +825,7 @@ function validateRankQuestions() {
         statusMessage += '. ';
         statusMessage += 'To skip a rank question, leave all the boxes blank.';
 
-        setStatusMessage(statusMessage, StatusType.DANGER);
+        setStatusMessage(statusMessage, true);
         return false;
     }
 

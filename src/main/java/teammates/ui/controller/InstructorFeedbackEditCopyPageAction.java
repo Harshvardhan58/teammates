@@ -24,6 +24,8 @@ public class InstructorFeedbackEditCopyPageAction extends Action {
         List<InstructorAttributes> instructors = logic.getInstructorsForGoogleId(account.googleId);
         Assumption.assertNotNull(instructors);
         
+        String currentPage = getRequestParamValue(Const.ParamsNames.CURRENT_PAGE);
+        
         List<CourseAttributes> allCourses = logic.getCoursesForInstructor(account.googleId);
         
         List<CourseAttributes> coursesToAddToData = new ArrayList<CourseAttributes>();
@@ -45,7 +47,7 @@ public class InstructorFeedbackEditCopyPageAction extends Action {
         
         InstructorFeedbackEditCopyPageData data = 
             new InstructorFeedbackEditCopyPageData(account, coursesToAddToData, courseId, 
-                                                   feedbackSessionName);
+                                                   feedbackSessionName, currentPage);
         
         return createShowPageResult(Const.ViewURIs.INSTRUCTOR_FEEDBACK_COPY_MODAL, data);
     }

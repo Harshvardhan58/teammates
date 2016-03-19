@@ -12,7 +12,7 @@
 <ti:instructorPage pageTitle="TEAMMATES - Instructor" bodyTitle="Instructor Home" jsIncludes="${jsIncludes}">
     <home:search />
     <br />
-    <t:statusMessage statusMessagesToUser="${data.statusMessagesToUser}" />
+    <t:statusMessage />
     <ti:remindParticularStudentsModal />
     <c:if test="${data.account.instructor}">
         <home:sort isSortButtonsDisabled="${data.sortingDisabled}"/>

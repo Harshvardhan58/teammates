@@ -3,7 +3,6 @@ package teammates.common.datatransfer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 
 import teammates.common.util.Const;
@@ -26,8 +25,6 @@ public class FeedbackResponseAttributes extends EntityAttributes {
     public String giverSection;
     public String recipientEmail; // TODO rename back "recipient" as it may contain team name and "%GENERAL%"?
     public String recipientSection;
-    private transient Date createdAt;
-    private transient Date updatedAt;
     
     /** Contains the JSON formatted string that holds the information of the response details <br>
      * Don't use directly unless for storing/loading from data store <br>
@@ -67,8 +64,6 @@ public class FeedbackResponseAttributes extends EntityAttributes {
         this.recipientEmail = fr.getRecipientEmail();
         this.recipientSection = (fr.getRecipientSection() == null) ? Const.DEFAULT_SECTION : fr.getRecipientSection();
         this.responseMetaData = fr.getResponseMetaData();
-        this.createdAt = fr.getCreatedAt();
-        this.updatedAt = fr.getUpdatedAt();
     }
     
     public FeedbackResponseAttributes(FeedbackResponseAttributes copy) {
@@ -82,8 +77,6 @@ public class FeedbackResponseAttributes extends EntityAttributes {
         this.recipientEmail = copy.recipientEmail;
         this.recipientSection = copy.recipientSection;
         this.responseMetaData = copy.responseMetaData;
-        this.createdAt = copy.createdAt;
-        this.updatedAt = copy.updatedAt;
     }
 
     public String getId() {
@@ -92,14 +85,6 @@ public class FeedbackResponseAttributes extends EntityAttributes {
     
     public void setId(String feedbackResponseId) {
         this.feedbackResponseId = feedbackResponseId;
-    }
-    
-    public Date getCreatedAt() {
-        return (createdAt == null) ? Const.TIME_REPRESENTS_DEFAULT_TIMESTAMP : createdAt;
-    }
-
-    public Date getUpdatedAt() {
-        return (updatedAt == null) ? Const.TIME_REPRESENTS_DEFAULT_TIMESTAMP : updatedAt;
     }
     
     @Override
@@ -232,20 +217,6 @@ public class FeedbackResponseAttributes extends EntityAttributes {
                 return fr1.getId().compareTo(fr2.getId());
             }
         });
-    }
-    
-    /**
-     * Should only be used for testing
-     */
-    public void setCreatedAt_NonProduction(Date createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    /**
-     * Should only be used for testing
-     */
-    public void setUpdatedAt_NonProduction(Date updatedAt) {
-        this.updatedAt = updatedAt;
     }
     
 }

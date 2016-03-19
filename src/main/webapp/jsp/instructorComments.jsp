@@ -14,7 +14,7 @@
 <ti:instructorPage pageTitle="TEAMMATES - Instructor" bodyTitle="Comments from Instructors" jsIncludes="${jsIncludes}">
     <comments:search instructorSearchLink="${data.instructorSearchLink}" displayArchive="${data.displayArchive}" instructorCommentsLink="${data.instructorCommentsLink}" commentsForStudentsTables="${data.commentsForStudentsTables}" feedbackSessions="${data.feedbackSessions}" />
     <br>
-    <t:statusMessage statusMessagesToUser="${data.statusMessagesToUser}" />
+    <t:statusMessage />
     <c:choose>
     <c:when test="${not empty data.coursePagination.coursePaginationList}">
         <shared:pagination coursePagination="${data.coursePagination}"/>

@@ -12,7 +12,7 @@
 
 </c:set>
 
-<ta:adminPage bodyTitle="Instructor Account Management" pageTitle="TEAMMATES - Administrator Account Management" jsIncludes="${jsIncludes}">    <t:statusMessage statusMessagesToUser="${data.statusMessagesToUser}" />
+<ta:adminPage bodyTitle="Instructor Account Management" pageTitle="TEAMMATES - Administrator Account Management" jsIncludes="${jsIncludes}">    <t:statusMessage/>
     <div id="pagination_top">
         <accounts:adminAccountManagementPagination />
     </div>

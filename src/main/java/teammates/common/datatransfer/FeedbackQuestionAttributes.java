@@ -1,7 +1,6 @@
 package teammates.common.datatransfer;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import teammates.common.util.Const;
@@ -33,8 +32,6 @@ public class FeedbackQuestionAttributes extends EntityAttributes implements Comp
     public List<FeedbackParticipantType> showResponsesTo;
     public List<FeedbackParticipantType> showGiverNameTo;
     public List<FeedbackParticipantType> showRecipientNameTo;
-    private transient Date createdAt;
-    private transient Date updatedAt;
 
     public FeedbackQuestionAttributes() {
         
@@ -55,20 +52,9 @@ public class FeedbackQuestionAttributes extends EntityAttributes implements Comp
         this.showGiverNameTo = new ArrayList<FeedbackParticipantType>(fq.getShowGiverNameTo());
         this.showRecipientNameTo = new ArrayList<FeedbackParticipantType>(fq.getShowRecipientNameTo());
         
-        this.createdAt = fq.getCreatedAt();
-        this.updatedAt = fq.getUpdatedAt();
-        
         removeIrrelevantVisibilityOptions();
     }
 
-    public Date getCreatedAt() {
-        return (createdAt == null) ? Const.TIME_REPRESENTS_DEFAULT_TIMESTAMP : createdAt;
-    }
-    
-    public Date getUpdatedAt() {
-        return (updatedAt == null) ? Const.TIME_REPRESENTS_DEFAULT_TIMESTAMP : updatedAt;
-    }
-    
     public String getId() {
         return feedbackQuestionId;
     }
@@ -582,19 +568,4 @@ public class FeedbackQuestionAttributes extends EntityAttributes implements Comp
     public String getQuestionAdditionalInfoHtml() {
         return getQuestionDetails().getQuestionAdditionalInfoHtml(questionNumber, "");
     }
-    
-    /**
-     * Should only be used for testing
-     */
-    public void setCreatedAt_NonProduction(Date createdAt) {
-        this.createdAt = createdAt;
-    }
-    
-    /**
-     * Should only be used for testing
-     */
-    public void setUpdatedAt_NonProduction(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-    
 }

@@ -100,16 +100,16 @@ function isStudentTeamNameValid(teamName) {
  */
 function isStudentInputValid(editName, editTeamName, editEmail) {
     if (editName === '' || editTeamName === '' || editEmail === '') {
-        setStatusMessage(DISPLAY_FIELDS_EMPTY, StatusType.DANGER);
+        setStatusMessage(DISPLAY_FIELDS_EMPTY, true);
         return false;
     } else if (!isNameValid(editName)) {
-        setStatusMessage(DISPLAY_NAME_INVALID, StatusType.DANGER);
+        setStatusMessage(DISPLAY_NAME_INVALID, true);
         return false;
     } else if (!isStudentTeamNameValid(editTeamName)) {
-        setStatusMessage(DISPLAY_STUDENT_TEAMNAME_INVALID, StatusType.DANGER);
+        setStatusMessage(DISPLAY_STUDENT_TEAMNAME_INVALID, true);
         return false;
     } else if (!isEmailValid(editEmail)) {
-        setStatusMessage(DISPLAY_EMAIL_INVALID, StatusType.DANGER);
+        setStatusMessage(DISPLAY_EMAIL_INVALID, true);
         return false;
     }
     
@@ -141,8 +141,7 @@ function setupFsCopyModal() {
                 $('#courseList').html(data);
                 // If the user alt-clicks, the form does not send any parameters and results in an error.
                 // Prevent default form submission and submit using jquery.
-                $('#fscopy_submit').off('click')
-                                   .on('click', 
+                $('#fscopy_submit').click(
                                         function(event) {
                                             $('#fscopy_submit').prop('disabled', true);
                                             event.preventDefault();
@@ -153,45 +152,6 @@ function setupFsCopyModal() {
             }
         });
     });
-
-    
-    $('#instructorCopyModalForm').submit(
-        function(e) {
-            e.preventDefault();
-            $this = $(this);
-            
-            $copyModalStatusMessage = $('#feedback-copy-modal-status');
-            
-            $.ajax({
-                type: 'POST',
-                url: $this.prop('action'),
-                data: $this.serialize(),
-                beforeSend: function() {
-                    $copyModalStatusMessage.removeClass("alert alert-danger");
-                    $copyModalStatusMessage.html($('<img>', {
-                                                       'class':'margin-center-horizontal',
-                                                       'src':'/images/ajax-loader.gif'
-                                                       }
-                                                ));
-                },
-                error: function() {
-                    $copyModalStatusMessage.addClass("alert alert-danger");
-                    $copyModalStatusMessage.text('There was an error during submission. ' 
-                                                 + 'Please close the dialog window and try again.');
-                },
-                success: function(data) {
-                    var isError = data.errorMessage !== "";
-                    if (!isError && data.redirectUrl) {
-                        window.location.href = data.redirectUrl;
-                    } else {
-                        $copyModalStatusMessage.addClass("alert alert-danger");
-                        $copyModalStatusMessage.text(data.errorMessage);
-                        $('#fscopy_submit').prop('disabled', false);
-                    }
-                }
-            });
-        }
-    );
 }
 
 // Student Profile Picture

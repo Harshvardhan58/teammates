@@ -83,17 +83,6 @@ var FEEDBACK_RESPONSE_ID = 'responseid';
 var FEEDBACK_RESPONSE_COMMENT_ID = 'responsecommentid';
 var FEEDBACK_RESPONSE_COMMENT_TEXT = 'responsecommenttext';
 
-// Status message type
-var StatusType = {
-    SUCCESS : "success",
-    INFO : "info",
-    WARNING : "warning",
-    DANGER : "danger",
-    isValidType : function(type) {
-        return type === StatusType.SUCCESS || type === StatusType.INFO || type === StatusType.WARNING || type === StatusType.DANGER;
-    }
-};
-
 // Display messages
 // Used for validating input
 var DISPLAY_INPUT_FIELDS_EXTRA = 'There are too many fields.';
@@ -543,61 +532,56 @@ function scrollToTop(duration) {
 }
 
 /** Selector for status message div tag (to be used in jQuery) */
-var DIV_STATUS_MESSAGE = '#statusMessagesToUser';
+var DIV_STATUS_MESSAGE = '#statusMessage';
 
 /**
- * Sets a status message and the message status.
- * Default message type is info.
+ * Sets a status message. Change the background color to red if it's an error
  *
- * @param message the text message to be shown to the user
- * @param status type
+ * @param message
+ * @param error
  */
-function setStatusMessage(message, status) {
-    if (message === '' || message === undefined || message === null) {
+function setStatusMessage(message, error) {
+    if (message === '') {
+        clearStatusMessage();
         return;
     }
-
-    // Default the status type to info if any invalid status is passed in
-    if (!StatusType.isValidType(status)) {
-        status = StatusType.INFO;
+    
+    $(DIV_STATUS_MESSAGE).html(message);
+    $(DIV_STATUS_MESSAGE).show();
+    
+    if (error === true) {
+        $(DIV_STATUS_MESSAGE).attr('class', 'overflow-auto alert alert-danger');
+    } else {
+        $(DIV_STATUS_MESSAGE).attr('class', 'overflow-auto alert alert-warning');
     }
     
-    var $statusMessagesToUser = $(DIV_STATUS_MESSAGE);
-    var $statusMessage = $("<div></div>");
-    
-    $statusMessage.addClass("overflow-auto");
-    $statusMessage.addClass("alert");
-    $statusMessage.addClass("alert-" + status);
-    $statusMessage.addClass("statusMessage");
-    $statusMessage.html(message);
-    
-    $statusMessagesToUser.empty();
-    $statusMessagesToUser.append($statusMessage);
-    $statusMessagesToUser.show();
-    
-    scrollToElement($statusMessagesToUser[0], {offset: window.innerHeight / 2 * -1});
+    scrollToElement($(DIV_STATUS_MESSAGE)[0], {offset: window.innerHeight / 2 * -1});
 }
 
 /**
- * Appends the status messages panels into the current list of panels of status messages.
- * @param  messages the list of status message panels to be added (not just text)
+ * Append a message to the existing status message
+ * @param  message
  * 
  */
-function appendStatusMessage(messages, error) {
-    var $statusMessagesToUser = $(DIV_STATUS_MESSAGE);
-    
-    $statusMessagesToUser.append($(messages));
-    $statusMessagesToUser.show();
+function appendStatusMessage(message, error) {
+    if (message.trim() === '') {
+        return;
+    }
+    var currentContent = $(DIV_STATUS_MESSAGE).html();
+    if (currentContent.trim() !== '') {
+        $(DIV_STATUS_MESSAGE).html(currentContent + '<br/>' + message);    
+    } else {
+        setStatusMessage(message, error);
+    }
 }
 
 /**
  * Clears the status message div tag and hides it
  */
-function clearStatusMessages() {
-    var $statusMessagesToUser = $(DIV_STATUS_MESSAGE);
-    
-    $statusMessagesToUser.empty();
-    $statusMessagesToUser.hide();
+function clearStatusMessage() {
+    $(DIV_STATUS_MESSAGE).html('');
+    $(DIV_STATUS_MESSAGE).css('background', '');
+    $(DIV_STATUS_MESSAGE).attr('style', 'display: none;');
 }
 
 /**

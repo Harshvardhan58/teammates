@@ -12,7 +12,7 @@ var addCommentHandler = function(e) {
     var formData = formObject.serialize();
     var responseCommentId = addFormRow.parent().attr('id');
     var numberOfComments = addFormRow.parent().find('li').length;
-    var commentId = responseCommentId.substring("responseCommentTable-".length) + '-' + numberOfComments;
+    var commentId = responseCommentId.substring(21) + '-' + numberOfComments;
     
     e.preventDefault();
     

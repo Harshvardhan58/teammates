@@ -1,5 +1,10 @@
 package teammates.ui.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import teammates.common.datatransfer.CourseAttributes;
 import teammates.common.datatransfer.FeedbackSessionAttributes;
 import teammates.common.datatransfer.InstructorAttributes;
 import teammates.common.exception.EntityAlreadyExistsException;
@@ -11,7 +16,7 @@ import teammates.common.util.StatusMessage;
 import teammates.common.util.Const.StatusMessageColor;
 import teammates.logic.api.GateKeeper;
 
-public class InstructorFeedbackCopyAction extends Action {
+public class InstructorFeedbackCopyAction extends InstructorFeedbacksPageAction {
 
     @Override
     protected ActionResult execute() throws EntityDoesNotExistException {
@@ -33,13 +38,15 @@ public class InstructorFeedbackCopyAction extends Action {
                 logic.getCourse(courseId),
                 Const.ParamsNames.INSTRUCTOR_PERMISSION_MODIFY_SESSION);
         
+        InstructorFeedbacksPageData data = new InstructorFeedbacksPageData(account);
+        
+        FeedbackSessionAttributes fs = null;
         try {
-
-            FeedbackSessionAttributes fs = logic.copyFeedbackSession(copiedFeedbackSessionName.trim(),
-                                                                     copiedCourseId,
-                                                                     feedbackSessionName,
-                                                                     courseId,
-                                                                     instructor.email);
+            fs = logic.copyFeedbackSession(copiedFeedbackSessionName,
+                                           copiedCourseId,
+                                           feedbackSessionName,
+                                           courseId,
+                                           instructor.email);
             
             statusToUser.add(new StatusMessage(Const.StatusMessages.FEEDBACK_SESSION_COPIED, StatusMessageColor.SUCCESS));
             statusToAdmin =
@@ -62,10 +69,24 @@ public class InstructorFeedbackCopyAction extends Action {
         } catch (InvalidParametersException e) {
             setStatusForException(e);
         }
-
-        RedirectResult redirectResult = createRedirectResult(Const.ActionURIs.INSTRUCTOR_FEEDBACKS_PAGE);
-        redirectResult.responseParams.put(Const.ParamsNames.USER_ID, account.googleId);
-        return redirectResult;
+        // isError == true if an exception occurred above
+        
+        boolean omitArchived = true;
+        Map<String, InstructorAttributes> instructors = loadCourseInstructorMap(omitArchived);
+        List<InstructorAttributes> instructorList =
+                new ArrayList<InstructorAttributes>(instructors.values());
+        List<CourseAttributes> courses = loadCoursesList(instructorList);
+        
+        List<FeedbackSessionAttributes> feedbackSessions = loadFeedbackSessionsList(instructorList);
+        FeedbackSessionAttributes.sortFeedbackSessionsByCreationTimeDescending(feedbackSessions);
+        
+        if (feedbackSessions.isEmpty()) {
+            statusToUser.add(new StatusMessage(Const.StatusMessages.FEEDBACK_SESSION_ADD_DB_INCONSISTENCY, StatusMessageColor.WARNING));
+        }
+        
+        data.initWithoutHighlightedRow(courses, null, feedbackSessions, instructors, fs, null);
+       
+        return createShowPageResult(Const.ViewURIs.INSTRUCTOR_FEEDBACKS, data);
     }
 
 }

@@ -9,7 +9,7 @@
     <script type="text/javascript" src="/js/studentHome.js"></script>
 </c:set>
 <ts:studentPage pageTitle="TEAMMATES - Student" bodyTitle="Student Home" jsIncludes="${jsIncludes}">
-    <t:statusMessage statusMessagesToUser="${data.statusMessagesToUser}" />
+    <t:statusMessage />
     <br />
     <c:forEach items="${data.courseTables}" var="courseTable">
         <home:coursePanel courseTable="${courseTable}">

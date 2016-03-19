@@ -117,7 +117,7 @@ public class InstructorFeedbackSubmissionEditPageActionTest extends BaseActionTe
                      + "&" + Const.ParamsNames.USER_ID + "=" + instructor.googleId,
                      rr.getDestinationWithParams());
         assertFalse(rr.isError);
-        assertEquals(Const.StatusMessages.FEEDBACK_SESSION_DELETED_NO_ACCESS,
+        assertEquals("The feedback session has been deleted and is no longer accessible.",
                      rr.getStatusMessage());
 
         ______TS("typical success case");

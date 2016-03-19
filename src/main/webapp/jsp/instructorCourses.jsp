@@ -19,7 +19,7 @@
     </c:if>
     
     <br>
-    <t:statusMessage statusMessagesToUser="${data.statusMessagesToUser}"/>
+    <t:statusMessage/>
     <br>
     
     <div id="coursesList" class="align-center">

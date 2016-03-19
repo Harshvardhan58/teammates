@@ -73,16 +73,6 @@ public class AdminSearchPageUiTest extends BaseUiTestCase {
         
         assertTrue(isSearchPanelPresent());
         assertTrue(isSearchDataDisplayCorrect());
-        
-        ______TS("search for student name with special characters");
-        
-        searchPage.clearSearchBox();
-        searchContent = "student(1)";
-        searchPage.inputSearchContent(searchContent);
-        searchPage.clickSearchButton();
-        
-        assertTrue(isSearchPanelPresent());
-        assertTrue(isSearchDataDisplayCorrect());
     }
 
     private AdminSearchPage getAdminSearchPage(String instructorId) {

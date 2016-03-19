@@ -17,7 +17,7 @@
 
     <search:searchPageInput />
     <br>
-    <t:statusMessage statusMessagesToUser="${data.statusMessagesToUser}" />
+    <t:statusMessage />
     
     <c:if test="${not data.commentsForStudentsEmpty}">
         <shared:commentsPanel commentsForStudentsTables="${data.searchCommentsForStudentsTables}" />

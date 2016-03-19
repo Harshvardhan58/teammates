@@ -21,16 +21,13 @@ var ajaxRequest = function(e) {
             isSessionsAjaxSending = false;
             $('#sessionList').html('');
             var msg = 'Failed to load sessions. Please <a href="#" onclick="loadSessionsByAjax()">click here</a> to retry.';
-            setStatusMessage(msg, StatusType.DANGER);
-            
-            if (oldStatus !== null && oldStatus !== undefined && oldStatus !== "") {
-                appendStatusMessage(oldStatus);
+            if (oldStatus) {
+                msg = oldStatus.text() + '<br>' + msg;
             }
+            setStatusMessage(msg, true);
         },
         success: function(data) {
-            clearStatusMessages();
-            appendStatusMessage(oldStatus);
-
+            $(DIV_STATUS_MESSAGE).replaceWith(oldStatus);
             var appendedModalBody = $(data).find('#copySessionsBody').html();
             var appendedSessionTable = $(data).find('#sessionList').html();
 
@@ -44,6 +41,6 @@ var ajaxRequest = function(e) {
 };
 
 $(document).ready(function(){
-    oldStatus = $(".statusMessage").clone();
+    oldStatus = $(DIV_STATUS_MESSAGE).clone();
     $('#ajaxForSessions').submit(ajaxRequest);
 });

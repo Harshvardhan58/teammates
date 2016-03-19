@@ -1,7 +1,6 @@
 #TEAMMATES Development Process
 
-##Roles and Positions
-**Roles**:
+##Roles
 * `Dev` - Issue owner who fixes the issue. 
 * `Reviewer` - Assigned per issue. Usually, a core team member.
 * `Release Lead` (RL) - Responsible for the release management.
@@ -9,19 +8,7 @@
 
 Note: *Roles* are related to the development process and they are different from *Positions*, which relate to
 the organization structure of the TEAMMATES dev community. 
-
-**Positions** (in the order of increasing seniority): 
-* `Contributor`
-* `Committer`
-* `Snr Developer`
-* `Area Lead`
-* `Project Lead`
-* `Project Advisor`
-
-Those who are at the rank of `Committer` or above are considered a core member if they are 'active'. 
-An *active* member is someone who contributes to almost every release cycle, thereby helping to maintin the 
-project velocity. An active member is expected to *pledge* at least one issue to each release, at the beginning of 
-the release cycle. They are also strongly encouraged to pick at least one high priority issue for each release cycle. 
+The Positions are: `Contributor`, `Committer`, `Snr Developer`, `Area Lead`, `Project Lead`, `Project Advisor`.
 
 ##Workflow
 

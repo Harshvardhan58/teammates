@@ -22,7 +22,7 @@
         <feedbacks:loadSessionsTableByAjaxForm fsList="${data.fsList}" />
     </c:if>
     <br>
-    <t:statusMessage statusMessagesToUser="${data.statusMessagesToUser}" />
+    <t:statusMessage />
     <br>
     <div id="sessionList" class="align-center">
         <c:if test="${data.usingAjax}"> 

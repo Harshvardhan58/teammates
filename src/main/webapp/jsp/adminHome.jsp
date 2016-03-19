@@ -35,5 +35,5 @@
             </table>
         </div>
     </div>
-    <t:statusMessage statusMessagesToUser="${data.statusMessagesToUser}" />
+    <t:statusMessage/>
 </ta:adminPage>

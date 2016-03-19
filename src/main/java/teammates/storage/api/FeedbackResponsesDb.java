@@ -543,31 +543,14 @@ public class FeedbackResponsesDb extends EntitiesDb {
     }
     
     /**
-     * Updates the feedback response identified by {@code newAttributes.getId()} and 
-     *   changes the {@code updatedAt} timestamp to be the time of update.
-     * For the remaining parameters, the existing value is preserved 
-     *   if the parameter is null (due to 'keep existing' policy).<br> 
-     * Preconditions: <br>
-     * * {@code newAttributes.getId()} is non-null and correspond to an existing feedback response.
-     * @throws EntityDoesNotExistException 
-     * @throws InvalidParametersException 
-     */
-    public void updateFeedbackResponse(FeedbackResponseAttributes newAttributes)
-            throws InvalidParametersException, EntityDoesNotExistException {
-        updateFeedbackResponse(newAttributes, false);
-    }
-    
-    /**
      * Updates the feedback response identified by {@code newAttributes.getId()} 
      * For the remaining parameters, the existing value is preserved 
      *   if the parameter is null (due to 'keep existing' policy).<br> 
-     * The timestamp for {@code updatedAt} is independent of the {@code newAttributes}
-     *   and depends on the value of {@code keepUpdateTimestamp}
      * Preconditions: <br>
      * * {@code newAttributes.getId()} is non-null and correspond to an existing feedback response.
      */
-    public void updateFeedbackResponse(FeedbackResponseAttributes newAttributes, boolean keepUpdateTimestamp) 
-            throws InvalidParametersException, EntityDoesNotExistException {
+    public void updateFeedbackResponse(FeedbackResponseAttributes newAttributes) 
+        throws InvalidParametersException, EntityDoesNotExistException {
         
         Assumption.assertNotNull(
                 Const.StatusCodes.DBLEVEL_NULL_INPUT, 
@@ -578,8 +561,7 @@ public class FeedbackResponsesDb extends EntitiesDb {
         }
         
         FeedbackResponse fr = (FeedbackResponse) getEntity(newAttributes);
-        
-        updateFeedbackResponseOptimized(newAttributes, fr, keepUpdateTimestamp);
+        updateFeedbackResponseOptimized(newAttributes, fr);
     }
     
     /**
@@ -587,13 +569,11 @@ public class FeedbackResponsesDb extends EntitiesDb {
      * Updates the feedback response identified by {@code newAttributes.getId()} 
      * For the remaining parameters, the existing value is preserved 
      *   if the parameter is null (due to 'keep existing' policy).<br> 
-     * The timestamp for {@code updatedAt} is independent of the {@code newAttributes}
-     *   and depends on the value of {@code keepUpdateTimestamp}
      * Preconditions: <br>
      * * {@code newAttributes.getId()} is non-null and correspond to an existing feedback response.
      */
-    private void updateFeedbackResponseOptimized(FeedbackResponseAttributes newAttributes, FeedbackResponse fr,
-            boolean keepUpdateTimestamp) throws InvalidParametersException, EntityDoesNotExistException {
+    public void updateFeedbackResponseOptimized(FeedbackResponseAttributes newAttributes, FeedbackResponse fr) 
+        throws InvalidParametersException, EntityDoesNotExistException {
         
         Assumption.assertNotNull(
                 Const.StatusCodes.DBLEVEL_NULL_INPUT, 
@@ -610,7 +590,6 @@ public class FeedbackResponsesDb extends EntitiesDb {
                     ERROR_UPDATE_NON_EXISTENT + newAttributes.toString());
         }
         
-        fr.keepUpdateTimestamp = keepUpdateTimestamp;
         fr.setAnswer(newAttributes.responseMetaData);
         fr.setRecipientEmail(newAttributes.recipientEmail);
         fr.setGiverSection(newAttributes.giverSection);
@@ -618,11 +597,6 @@ public class FeedbackResponsesDb extends EntitiesDb {
                 
         log.info(newAttributes.getBackupIdentifier());
         getPM().close();
-    }
-    
-    public void updateFeedbackResponseOptimized(FeedbackResponseAttributes newAttributes, FeedbackResponse fr) 
-            throws InvalidParametersException, EntityDoesNotExistException {
-        updateFeedbackResponseOptimized(newAttributes, fr, false);
     }
     
     public void deleteFeedbackResponsesForCourse(String courseId) {

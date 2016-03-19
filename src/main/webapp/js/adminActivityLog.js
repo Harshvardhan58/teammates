@@ -42,8 +42,7 @@ function submitLocalTimeAjaxRequest(time, googleId, role, entry){
                 } else {
                 	$(localTimeDisplay).html("Loading error, please retry");      	
                 }
-                
-                setStatusMessage(data.statusForAjax, StatusType.INFO);
+                $("#statusMessage").html(data.statusForAjax);
             },500);
         }
     });
@@ -82,7 +81,8 @@ function submitFormAjax(searchTimeOffset) {
                     setFormErrorMessage(button, data.errorMessage);
                 }
 
-                setStatusMessage(data.statusForAjax, StatusType.INFO);
+                $("#statusMessage").html(data.statusForAjax);
+
             },500);
         }
     });

@@ -12,7 +12,7 @@
 
 <ta:adminPage pageTitle="TEAMMATES - Administrator Account Details" bodyTitle="Instructor Account Details" jsIncludes="${jsIncludes}">
     <accounts:accountDetailsForInstructorPanel accountInformation="${data.accountInformation}"/>
-    <t:statusMessage statusMessagesToUser="${data.statusMessagesToUser}" />
+    <t:statusMessage />
 
     <div class="page-header">
         <h2>

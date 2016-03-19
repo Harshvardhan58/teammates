@@ -1,7 +1,6 @@
 package teammates.test.pageobjects;
 
 import static org.testng.AssertJUnit.assertEquals;
-import static org.testng.AssertJUnit.assertFalse;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -27,13 +26,11 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoAlertPresentException;
 import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebElement;
 import org.openqa.selenium.remote.UselessFileDetector;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
-import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -71,7 +68,7 @@ public abstract class AppPage {
     @SuppressWarnings("unused")
     private void ____Common_page_elements___________________________________() {
     }
-    @FindBy(id = "statusMessagesToUser")
+    @FindBy(id = "statusMessage")
     protected WebElement statusMessage;
     
     @FindBy(xpath = "//*[@id=\"contentLinks\"]/ul[1]/li[1]/a")
@@ -217,45 +214,6 @@ public abstract class AppPage {
         wait.until(ExpectedConditions.invisibilityOfElementLocated(by));
     }
     
-    /**
-     * Waits for a list of elements to be invisible or not present, or timeout.
-     */
-    public void waitForElementsToDisappear(List<WebElement> elements) {
-        WebDriverWait wait = new WebDriverWait(browser.driver, TestProperties.inst().TEST_TIMEOUT);
-        wait.until(invisibilityOfAllElements(elements));
-    }
-    
-    /**
-     * Code adapted from SeleniumHQ's GitHub page.
-     * TODO to be removed when Selenium is upgraded to the version supporting this method.
-     *
-     * An expectation for checking all elements from given list to be invisible
-     *
-     * @param elements used to check their invisibility
-     * @return Boolean true when all elements are not visible anymore
-     */
-    private ExpectedCondition<Boolean> invisibilityOfAllElements(final List<WebElement> elements) {
-        return new ExpectedCondition<Boolean>() {
-            @Override
-            public Boolean apply(WebDriver webDriver) {
-                for (WebElement element : elements) {
-                    try {
-                        if (element.isDisplayed()) {
-                            return false;
-                        }
-                    } catch (Exception e) {
-                    }
-                }
-                return true;
-            }
-
-            @Override
-            public String toString() {
-                return "invisibility of all elements " + elements;
-            }
-        };
-    }
-
     /**
      * Waits for the element to appear in the page, up to the timeout specified.
      */
@@ -880,7 +838,7 @@ public abstract class AppPage {
             assertEquals(expectedStatus, this.getStatus());
         } catch(Exception e){
             if(!expectedStatus.equals("")){
-                this.waitForElementPresence(By.id("statusMessagesToUser"));
+                this.waitForElementPresence(By.id("statusMessage"));
                 if(!statusMessage.isDisplayed()){
                     this.waitForElementVisibility(statusMessage);
                 }
@@ -982,18 +940,6 @@ public abstract class AppPage {
     public void verifyFieldValue (String fieldId, String expectedValue) {
         assertEquals(expectedValue,
                 browser.driver.findElement(By.id(fieldId)).getAttribute("value"));
-    }
-    
-    /**
-     * Verifies that the page source does not contain the given searchString.
-     * 
-     * @param searchString the substring that we want to omit from the page source
-     * @return the AppPage
-     */
-    public AppPage verifyNotContain(String searchString) {
-        String pageSource = getPageSource();
-        assertFalse(pageSource.contains(searchString));
-        return this;
     }
         
     @SuppressWarnings("unused")

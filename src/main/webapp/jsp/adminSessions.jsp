@@ -29,7 +29,7 @@
     </h1>
     <br>
     <adminSessions:filter filter="${data.filter}"/>
-    <t:statusMessage statusMessagesToUser="${data.statusMessagesToUser}" />
+    <t:statusMessage/>
     <c:forEach items="${data.institutionPanels}" var="institutionPanel" varStatus="i">
         <adminSessions:institutionPanel institutionPanel="${institutionPanel}" tableIndex="${i.count}" showAll="${data.showAll}" />
     </c:forEach>
